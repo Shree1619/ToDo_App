@@ -1,0 +1,41 @@
+<!-- todo_list/todo_app/templates/todo_app/todo_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <div>
+        <div>
+            <h3>Edit list:</h3>
+            <h5>{{ todo_list.title|upper }}</h5>
+        </div>
+        <ul>
+            {% for todo in object_list %}
+            <li>
+                <div>
+                    <form method="post" action="{% url 'item-delete' list_id=todo_list.id pk=todo.id %}">
+                        {% csrf_token %}
+                        <div role="button" onclick="this.parentNode.submit()">
+                            {{ todo.title }}
+                            (Due {{ todo.due_date|date:"l, F j" }}) - Status: {{ todo.get_status_display }}
+                            <br>
+                            Created: {{ todo.created_date|date:"l, F j, Y H:i e" }}
+                        </div>
+                    </form>
+                </div>
+            </li>
+            {% empty %}
+            <p>There are no to-do items in this list.</p>
+            {% endfor %}
+        </ul>
+        <p>
+            <input value="Add a new item" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" />
+
+            <!-- Correct the delete button to use a form -->
+            <form method="post" action="{% url 'list-delete' todo_list.id %}" style="display: inline;">
+                {% csrf_token %}
+                <input type="submit" value="Delete this list" />
+            </form>
+        </p>
+    </div>
+</div>
+{% endblock %}
